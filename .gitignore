@@ -1,0 +1,27 @@
+# Maven build output
+target/
+
+# Generated images / local output
+out/
+*.png
+
+# IDE: Eclipse
+.classpath
+.project
+.settings/
+.apt_generated/
+
+# IDE: IntelliJ
+.idea/
+*.iml
+
+# IDE: VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local secrets / config
+*.env
+.env

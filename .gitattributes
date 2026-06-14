@@ -1,0 +1,14 @@
+# Normalize line endings on commit; let Git pick the working-tree style.
+* text=auto
+
+# The Maven wrapper Unix launcher must keep LF to stay executable on Unix/macOS.
+mvnw text eol=lf
+
+# Windows batch scripts require CRLF.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Treat binaries as binary (no EOL conversion).
+*.jar binary
+*.png binary
+*.ico binary
