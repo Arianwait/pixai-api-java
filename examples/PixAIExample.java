@@ -1,19 +1,23 @@
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import kz.awsstudio.pixai.AspectRatio;
 import kz.awsstudio.pixai.GeneratedImage;
 import kz.awsstudio.pixai.GenerationParameters;
+import kz.awsstudio.pixai.Model;
 import kz.awsstudio.pixai.PixAIClient;
+import kz.awsstudio.pixai.Size;
+import kz.awsstudio.pixai.Task;
 
 /**
- * Runnable sample for the pixai-api-java library.
+ * Runnable sample for the pixai-api-java library (PixAI API v2).
  *
- * <p>This file is documentation only and is intentionally NOT part of the Maven
- * build. To run it, build/install the library first ({@code ./mvnw install}) and
- * compile this file against the produced jar, or paste the body into your own project.
+ * <p>This file is documentation only and is intentionally NOT part of the Maven build. To run it,
+ * build/install the library first ({@code ./mvnw install}) and compile this file against the
+ * produced jar, or paste the body into your own project.
  *
- * <p>The API key is read from the {@code PIXAI_API_KEY} environment variable so it is
- * never hardcoded or committed.
+ * <p>The API key is read from the {@code PIXAI_API_KEY} environment variable so it is never
+ * hardcoded or committed.
  */
 public class PixAIExample {
 
@@ -24,21 +28,28 @@ public class PixAIExample {
             return;
         }
 
-        PixAIClient client = PixAIClient.builder()
-                .apiKey(apiKey)
+        // ---- Simplest path: 4 steps (client, key, prompt, run) ----
+        PixAIClient client = new PixAIClient(apiKey);            // 1) client + 2) key
+        GenerationParameters minimal = GenerationParameters.builder()
+                .prompt("a fox in a forest, digital art")        // 3) prompt (required)
                 .build();
+        Task task = client.generate(minimal);                    // 4) run
+        for (GeneratedImage image : task.images()) {
+            Path saved = image.saveTo(Paths.get("out"));
+            System.out.println("Image saved to: " + saved);
+        }
 
+        // ---- Optional: full configuration ----
         GenerationParameters params = GenerationParameters.builder()
-                .prompts("a fox in a forest, digital art")
+                .model(Model.HARUKA_V2)                  // or .modelVersionId("...") for a custom model
+                .prompt("a fox in a forest, digital art")
                 .negativePrompt("low quality, blurry")
-                .modelId("1648918127446573124")
-                .samplingSteps(50)
-                .width(768)
-                .height(1280)
+                .aspectRatio(AspectRatio.RATIO_9_16)
+                .size(Size.ONE_K)
+                .seed(42L)
                 .build();
 
-        GeneratedImage image = client.generate(params); // blocks until completion
-        Path saved = image.saveTo(Paths.get("out"));
-        System.out.println("Image saved to: " + saved);
+        Task configured = client.generate(params); // blocks until completion
+        configured.images().forEach(img -> System.out.println(img.getUrl()));
     }
 }

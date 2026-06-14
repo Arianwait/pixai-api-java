@@ -1,6 +1,10 @@
 # Maven build output
 target/
 
+# JVM crash / replay logs
+hs_err_pid*.log
+replay_pid*.log
+
 # Generated images / local output
 out/
 *.png
@@ -25,3 +29,6 @@ Thumbs.db
 # Local secrets / config
 *.env
 .env
+
+# Local-only API reference notes (not committed)
+pixai-v2-api-reference.md

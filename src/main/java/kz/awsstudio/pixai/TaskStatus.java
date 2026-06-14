@@ -51,6 +51,7 @@ public enum TaskStatus {
             case "pending":
             case "waiting":
                 return PENDING;
+            case "started":
             case "processing":
             case "running":
                 return PROCESSING;

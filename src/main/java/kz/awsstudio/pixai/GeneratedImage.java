@@ -7,15 +7,14 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import kz.awsstudio.pixai.internal.GraphQLClient;
+import kz.awsstudio.pixai.internal.RestClient;
 
 /**
- * A generated image returned by {@link PixAIClient}.
+ * A single generated image (one entry of a {@link Task}'s outputs).
  *
- * <p>Holds the media identifier and download URL and provides convenience methods to
- * fetch the bytes ({@link #getBytes()}) or save them to disk ({@link #saveTo(Path)}).
- * Unlike the original client, downloading is lazy and the caller decides what to do
- * with the result instead of it being printed and written automatically.
+ * <p>Holds the media identifier and download URL and provides convenience methods to fetch the
+ * bytes ({@link #getBytes()}) or save them to disk ({@link #saveTo(Path)}). Downloading is lazy
+ * (and cached) so the caller decides whether and when to fetch the data.
  */
 public final class GeneratedImage {
 
@@ -23,17 +22,17 @@ public final class GeneratedImage {
 
     private final String mediaId;
     private final String url;
-    private final GraphQLClient transport;
+    private final RestClient transport;
 
     private byte[] cachedBytes;
 
-    GeneratedImage(String mediaId, String url, GraphQLClient transport) {
+    GeneratedImage(String mediaId, String url, RestClient transport) {
         this.mediaId = mediaId;
         this.url = url;
         this.transport = transport;
     }
 
-    /** @return the PixAI media id. */
+    /** @return the PixAI media id, or {@code null} if the API did not provide one. */
     public String getMediaId() {
         return mediaId;
     }

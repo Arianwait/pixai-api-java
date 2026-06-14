@@ -3,21 +3,18 @@ package kz.awsstudio.pixai;
 import java.time.Duration;
 import java.util.Objects;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import kz.awsstudio.pixai.internal.GraphQLClient;
+import kz.awsstudio.pixai.internal.RestClient;
 import okhttp3.OkHttpClient;
 
 /**
- * Client for the <a href="https://pixai.art">PixAI</a> image-generation API.
+ * Client for the <a href="https://pixai.art">PixAI</a> image-generation REST API (v2).
  *
  * <p>Create one via the {@linkplain #builder() builder} (or the convenience
  * {@link #PixAIClient(String)} constructor), then call {@link #generate(GenerationParameters)}
- * for the common "submit, wait, fetch" flow, or use the lower-level
- * {@link #createTask}, {@link #getStatus}, {@link #awaitCompletion} and {@link #getMedia}
- * methods for finer control.
+ * for the common "submit, wait, fetch" flow, or use the lower-level {@link #createTask},
+ * {@link #getTask} and {@link #awaitCompletion} methods for finer control.
  *
  * <pre>{@code
  * PixAIClient client = PixAIClient.builder()
@@ -25,39 +22,33 @@ import okhttp3.OkHttpClient;
  *         .build();
  *
  * GenerationParameters params = GenerationParameters.builder()
- *         .prompts("a fox in a forest, digital art")
+ *         .modelVersionId("1648918127446573124")
+ *         .prompt("a fox in a forest, digital art")
  *         .build();
  *
- * GeneratedImage image = client.generate(params);
- * Path saved = image.saveTo(Paths.get("out"));
+ * Task task = client.generate(params);
+ * task.images().get(0).saveTo(Paths.get("out"));
  * }</pre>
  *
- * <p>Instances are immutable and safe to share between threads. All methods throw
- * the unchecked {@link PixAIException} on API or transport failures.
+ * <p>Instances are immutable and safe to share between threads. All methods throw the unchecked
+ * {@link PixAIException} on API or transport failures.
  */
 public final class PixAIClient {
 
-    private static final String DEFAULT_ENDPOINT = "https://api.pixai.art/graphql";
+    private static final String DEFAULT_BASE_URL = "https://api.pixai.art";
+    private static final String CREATE_PATH = "/v2/image/create";
+    private static final String TASK_PATH_PREFIX = "/v2/image/";
+
     private static final Duration DEFAULT_POLL_INTERVAL = Duration.ofSeconds(5);
     private static final Duration DEFAULT_TIMEOUT = Duration.ofMinutes(10);
 
-    private static final String CREATE_TASK_MUTATION =
-            "mutation createGenerationTask($parameters: JSONObject!) "
-            + "{ createGenerationTask(parameters: $parameters) { id } }";
-    private static final String GET_STATUS_QUERY =
-            "query getTaskById($id: ID!) { task(id: $id) { id status } }";
-    private static final String GET_OUTPUTS_QUERY =
-            "query getTaskById($id: ID!) { task(id: $id) { outputs } }";
-    private static final String GET_MEDIA_QUERY =
-            "query getMediaById($id: String!) { media(id: $id) { urls { variant url } } }";
-
-    private final GraphQLClient transport;
+    private final RestClient transport;
     private final Duration pollInterval;
     private final Duration timeout;
 
     private PixAIClient(Builder b) {
         OkHttpClient httpClient = b.httpClient != null ? b.httpClient : new OkHttpClient();
-        this.transport = new GraphQLClient(httpClient, b.apiKey, b.baseUrl);
+        this.transport = new RestClient(httpClient, b.apiKey, b.baseUrl);
         this.pollInterval = b.pollInterval;
         this.timeout = b.timeout;
     }
@@ -72,79 +63,67 @@ public final class PixAIClient {
     }
 
     /**
-     * Submits a generation request, waits for it to finish and returns the image.
+     * Submits a generation request, waits for it to finish and returns the completed task.
      *
      * @param params the generation parameters.
-     * @return the generated image.
-     * @throws PixAIException if the task fails, is cancelled, times out, or any
-     *                        API call fails.
+     * @return the completed {@link Task} (its {@link Task#images()} are populated).
+     * @throws PixAIException if the task fails, is cancelled, times out, or any API call fails.
      */
-    public GeneratedImage generate(GenerationParameters params) {
-        String taskId = createTask(params);
-        TaskStatus status = awaitCompletion(taskId);
-        if (status != TaskStatus.COMPLETED) {
-            throw new PixAIException("Generation task " + taskId
-                    + " ended with status " + status);
+    public Task generate(GenerationParameters params) {
+        Task created = createTask(params);
+        Task finished = awaitCompletion(created.getId());
+        if (finished.getStatus() != TaskStatus.COMPLETED) {
+            throw new PixAIException("Generation task " + finished.getId()
+                    + " ended with status " + finished.getRawStatus());
         }
-        return getMedia(taskId);
+        return finished;
     }
 
     /**
-     * Creates a generation task and returns its id without waiting for completion.
+     * Creates a generation task and returns it without waiting for completion.
      *
      * @param params the generation parameters.
-     * @return the task id.
+     * @return the created {@link Task} (initially in a non-terminal status).
      * @throws PixAIException if the request fails or the response is malformed.
      */
-    public String createTask(GenerationParameters params) {
+    public Task createTask(GenerationParameters params) {
         Objects.requireNonNull(params, "params must not be null");
-        JSONObject variables = new JSONObject();
-        variables.put("parameters", params.toJson());
-
-        JSONObject data = transport.query(CREATE_TASK_MUTATION, variables);
-        try {
-            return data.getJSONObject("createGenerationTask").getString("id");
-        } catch (JSONException e) {
-            throw new PixAIException("Unexpected createGenerationTask response: " + data, e);
+        JSONObject response = transport.post(CREATE_PATH, params.toJson());
+        Task task = new Task(response, transport);
+        if (task.getId() == null) {
+            throw new PixAIException("create-image response had no task id: " + response);
         }
+        return task;
     }
 
     /**
-     * Returns the current status of a task.
+     * Fetches the current state of a task by id.
      *
      * @param taskId the task id.
-     * @return the current {@link TaskStatus}.
+     * @return the {@link Task} as it currently stands.
      * @throws PixAIException if the request fails or the response is malformed.
      */
-    public TaskStatus getStatus(String taskId) {
+    public Task getTask(String taskId) {
         Objects.requireNonNull(taskId, "taskId must not be null");
-        JSONObject variables = new JSONObject();
-        variables.put("id", taskId);
-
-        JSONObject data = transport.query(GET_STATUS_QUERY, variables);
-        try {
-            return TaskStatus.fromApi(data.getJSONObject("task").getString("status"));
-        } catch (JSONException e) {
-            throw new PixAIException("Unexpected task status response: " + data, e);
-        }
+        JSONObject response = transport.get(TASK_PATH_PREFIX + taskId);
+        return new Task(response, transport);
     }
 
     /**
-     * Polls {@link #getStatus(String)} until the task reaches a terminal status or
-     * the configured timeout elapses.
+     * Polls {@link #getTask(String)} until the task reaches a terminal status or the configured
+     * timeout elapses.
      *
      * @param taskId the task id.
-     * @return the terminal {@link TaskStatus} (one of COMPLETED, FAILED, CANCELLED).
-     * @throws PixAIException if the timeout elapses, the thread is interrupted, or a
-     *                        status request fails.
+     * @return the {@link Task} in its terminal status.
+     * @throws PixAIException if the timeout elapses, the thread is interrupted, or a request fails.
      */
-    public TaskStatus awaitCompletion(String taskId) {
+    public Task awaitCompletion(String taskId) {
         Objects.requireNonNull(taskId, "taskId must not be null");
         long deadline = System.nanoTime() + timeout.toNanos();
         while (true) {
-            TaskStatus status = getStatus(taskId);
-            if (status.isTerminal()) {
-                return status;
+            Task task = getTask(taskId);
+            if (task.getStatus().isTerminal()) {
+                return task;
             }
             if (System.nanoTime() >= deadline) {
                 throw new PixAIException("Timed out after " + timeout
@@ -159,59 +138,6 @@ public final class PixAIClient {
         }
     }
 
-    /**
-     * Fetches the media produced by a completed task.
-     *
-     * @param taskId the task id.
-     * @return the generated image.
-     * @throws PixAIException if the task has no media or a request fails.
-     */
-    public GeneratedImage getMedia(String taskId) {
-        Objects.requireNonNull(taskId, "taskId must not be null");
-        String mediaId = fetchMediaId(taskId);
-        String url = fetchMediaUrl(mediaId);
-        return new GeneratedImage(mediaId, url, transport);
-    }
-
-    private String fetchMediaId(String taskId) {
-        JSONObject variables = new JSONObject();
-        variables.put("id", taskId);
-
-        JSONObject data = transport.query(GET_OUTPUTS_QUERY, variables);
-        try {
-            JSONObject outputs = data.getJSONObject("task").getJSONObject("outputs");
-            String mediaId = outputs.optString("mediaId", null);
-            if (mediaId == null || mediaId.isEmpty()) {
-                throw new PixAIException("Task " + taskId + " has no mediaId in outputs: " + outputs);
-            }
-            return mediaId;
-        } catch (JSONException e) {
-            throw new PixAIException("Unexpected task outputs response: " + data, e);
-        }
-    }
-
-    private String fetchMediaUrl(String mediaId) {
-        JSONObject variables = new JSONObject();
-        variables.put("id", mediaId);
-
-        JSONObject data = transport.query(GET_MEDIA_QUERY, variables);
-        try {
-            JSONArray urls = data.getJSONObject("media").getJSONArray("urls");
-            for (int i = 0; i < urls.length(); i++) {
-                String url = urls.getJSONObject(i).optString("url", null);
-                if (url != null && !url.isEmpty()) {
-                    return url;
-                }
-            }
-            throw new PixAIException("No downloadable URL for media " + mediaId);
-        } catch (JSONException e) {
-            throw new PixAIException("Unexpected media response: " + data, e);
-        }
-    }
-
-    /**
-     * @return a new {@link Builder}.
-     */
     public static Builder builder() {
         return new Builder();
     }
@@ -219,7 +145,7 @@ public final class PixAIClient {
     /** Fluent builder for {@link PixAIClient}. */
     public static final class Builder {
         private String apiKey;
-        private String baseUrl = DEFAULT_ENDPOINT;
+        private String baseUrl = DEFAULT_BASE_URL;
         private Duration pollInterval = DEFAULT_POLL_INTERVAL;
         private Duration timeout = DEFAULT_TIMEOUT;
         private OkHttpClient httpClient;
@@ -233,7 +159,7 @@ public final class PixAIClient {
             return this;
         }
 
-        /** Overrides the GraphQL endpoint (defaults to {@value #DEFAULT_ENDPOINT}). */
+        /** Overrides the API base URL (defaults to {@value #DEFAULT_BASE_URL}). */
         public Builder baseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
             return this;
