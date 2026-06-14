@@ -4,9 +4,6 @@ A minimal, dependency-light Java client for the [PixAI](https://pixai.art) image
 **REST API v2**. Give it a prompt; it starts a generation task, waits for completion, and gives
 you the resulting image(s) as bytes or saves them to disk.
 
-> **Note on the name:** despite "node" in the repository name, this project is pure Java and
-> has no Node.js dependency.
-
 ## Features
 
 - Fluent, immutable API — configure the client and each request with builders.

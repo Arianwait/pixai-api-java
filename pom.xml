@@ -11,7 +11,7 @@
 
   <name>pixai-api-java</name>
   <description>A minimal, single-dependency Java client for the PixAI image-generation API.</description>
-  <url>https://github.com/Arianwait/node-pixai-api-java</url>
+  <url>https://github.com/Arianwait/pixai-api-java</url>
 
   <licenses>
     <license>
@@ -31,9 +31,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:https://github.com/Arianwait/node-pixai-api-java.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/Arianwait/node-pixai-api-java.git</developerConnection>
-    <url>https://github.com/Arianwait/node-pixai-api-java</url>
+    <connection>scm:git:https://github.com/Arianwait/pixai-api-java.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/Arianwait/pixai-api-java.git</developerConnection>
+    <url>https://github.com/Arianwait/pixai-api-java</url>
   </scm>
 
   <properties>
