@@ -21,8 +21,32 @@ Java 17 · OkHttp · `org.json` · Maven
 
 ## Installation
 
-The library is not published to a public registry yet. Until then, build and install it into
-your local Maven repository, then depend on it:
+Not on a public registry yet — the easiest way is to **download the self-contained jar from the
+release** and put it on your classpath.
+
+### Option 1 — Download the jar (recommended)
+
+1. Download **`pixai-api-java-1.0.0-all.jar`** from the
+   [latest release](https://github.com/Arianwait/pixai-api-java/releases/latest).
+2. Add it to your project:
+   - **Eclipse:** Project → Properties → Java Build Path → **Libraries** → select **Classpath** →
+     *Add External JARs…* → pick the jar.
+   - **IntelliJ IDEA:** File → Project Structure → Libraries → **+** → Java → pick the jar.
+   - **Command line:**
+     ```bash
+     javac -cp pixai-api-java-1.0.0-all.jar Main.java
+     java  -cp ".:pixai-api-java-1.0.0-all.jar" Main      # Windows: use ';' instead of ':'
+     ```
+
+The `-all` jar bundles every runtime dependency (OkHttp, Okio, kotlin-stdlib, org.json), so there
+is nothing else to add.
+
+> If your project uses the Java module system (has a `module-info.java`), add
+> `requires kz.arianwaitstudio.pixai;` and put the jar on the module path.
+
+### Option 2 — Maven / Gradle (local install)
+
+If you build with Maven, install it into your local repository and depend on it:
 
 ```bash
 ./mvnw install
