@@ -84,18 +84,15 @@ task.images().get(0).saveTo(Paths.get("out"));                       // -> out/p
 
 ## Gallery
 
-_Generated with this client. Prompts are in each image's alt text._
+_Generated with this client._
 
-<!-- Drop 3 PNGs into docs/images/ named sample-1.png … sample-3.png, then uncomment:
 <table>
   <tr>
-    <td><img src="docs/images/sample-1.png" width="250" alt="a fox in a forest, digital art"></td>
-    <td><img src="docs/images/sample-2.png" width="250" alt="1girl, kimono, cherry blossoms"></td>
-    <td><img src="docs/images/sample-3.png" width="250" alt="cyberpunk city at night"></td>
+    <td align="center"><img src="docs/images/sample-1.webp" width="250" alt="silver-haired elf knight in ornate plate armor with phoenixes"><br><sub>elf knight in ornate armor, phoenixes</sub></td>
+    <td align="center"><img src="docs/images/sample-2.webp" width="250" alt="floating island with waterfalls above the clouds at sunset"><br><sub>floating island, waterfalls, sunset</sub></td>
+    <td align="center"><img src="docs/images/sample-3.webp" width="250" alt="cyberpunk girl with a neon-lit city at night"><br><sub>cyberpunk portrait, neon city</sub></td>
   </tr>
 </table>
--->
-<!-- (placeholder — remove this line and the comment markers once the images are added) -->
 
 ---
 
