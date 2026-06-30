@@ -1,5 +1,7 @@
 # pixai-api-java
 
+> ⚠️ **Unofficial, community-built client. Not affiliated with or endorsed by PixAI.**
+
 A minimal, dependency-light Java client for the [PixAI](https://pixai.art) image-generation
 **REST API v2**. Give it a prompt; it starts a generation task, waits for completion, and gives
 you the resulting image(s) as bytes or saves them to disk.
@@ -82,10 +84,18 @@ task.images().get(0).saveTo(Paths.get("out"));                       // -> out/p
 
 ## Gallery
 
-<!-- Add a couple of generated samples here, e.g.:
-![sample 1](docs/images/sample1.png)
-![sample 2](docs/images/sample2.png)
+_Generated with this client. Prompts are in each image's alt text._
+
+<!-- Drop 3 PNGs into docs/images/ named sample-1.png … sample-3.png, then uncomment:
+<table>
+  <tr>
+    <td><img src="docs/images/sample-1.png" width="250" alt="a fox in a forest, digital art"></td>
+    <td><img src="docs/images/sample-2.png" width="250" alt="1girl, kimono, cherry blossoms"></td>
+    <td><img src="docs/images/sample-3.png" width="250" alt="cyberpunk city at night"></td>
+  </tr>
+</table>
 -->
+<!-- (placeholder — remove this line and the comment markers once the images are added) -->
 
 ---
 
