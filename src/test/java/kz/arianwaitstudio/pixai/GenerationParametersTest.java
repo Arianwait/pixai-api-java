@@ -1,4 +1,4 @@
-package kz.awsstudio.pixai;
+package kz.arianwaitstudio.pixai;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

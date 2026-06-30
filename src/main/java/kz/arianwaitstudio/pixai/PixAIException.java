@@ -1,4 +1,4 @@
-package kz.awsstudio.pixai;
+package kz.arianwaitstudio.pixai;
 
 /**
  * Unchecked exception thrown when a call to the PixAI API fails.

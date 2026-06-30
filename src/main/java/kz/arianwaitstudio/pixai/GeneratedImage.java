@@ -1,4 +1,4 @@
-package kz.awsstudio.pixai;
+package kz.arianwaitstudio.pixai;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import kz.awsstudio.pixai.internal.RestClient;
+import kz.arianwaitstudio.pixai.internal.RestClient;
 
 /**
  * A single generated image (one entry of a {@link Task}'s outputs).

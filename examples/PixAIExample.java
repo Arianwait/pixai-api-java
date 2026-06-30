@@ -1,13 +1,13 @@
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import kz.awsstudio.pixai.AspectRatio;
-import kz.awsstudio.pixai.GeneratedImage;
-import kz.awsstudio.pixai.GenerationParameters;
-import kz.awsstudio.pixai.Model;
-import kz.awsstudio.pixai.PixAIClient;
-import kz.awsstudio.pixai.Size;
-import kz.awsstudio.pixai.Task;
+import kz.arianwaitstudio.pixai.AspectRatio;
+import kz.arianwaitstudio.pixai.GeneratedImage;
+import kz.arianwaitstudio.pixai.GenerationParameters;
+import kz.arianwaitstudio.pixai.Model;
+import kz.arianwaitstudio.pixai.PixAIClient;
+import kz.arianwaitstudio.pixai.Size;
+import kz.arianwaitstudio.pixai.Task;
 
 /**
  * Runnable sample for the pixai-api-java library (PixAI API v2).

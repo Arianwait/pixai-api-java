@@ -1,4 +1,4 @@
-package kz.awsstudio.pixai;
+package kz.arianwaitstudio.pixai;
 
 /**
  * Aspect ratio of the generated image (PixAI API v2 {@code aspectRatio}).

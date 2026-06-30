@@ -1,11 +1,11 @@
-package kz.awsstudio.pixai.internal;
+package kz.arianwaitstudio.pixai.internal;
 
 import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import kz.awsstudio.pixai.PixAIException;
+import kz.arianwaitstudio.pixai.PixAIException;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

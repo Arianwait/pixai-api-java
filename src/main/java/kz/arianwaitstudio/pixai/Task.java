@@ -1,4 +1,4 @@
-package kz.awsstudio.pixai;
+package kz.arianwaitstudio.pixai;
 
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
@@ -9,7 +9,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import kz.awsstudio.pixai.internal.RestClient;
+import kz.arianwaitstudio.pixai.internal.RestClient;
 
 /**
  * A generation task returned by the PixAI API v2.

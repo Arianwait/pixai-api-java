@@ -1,4 +1,4 @@
-package kz.awsstudio.pixai;
+package kz.arianwaitstudio.pixai;
 
 /**
  * Sampling methods accepted in the {@code sampling} object (SDXL / SD v1 models only).

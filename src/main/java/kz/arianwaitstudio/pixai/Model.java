@@ -1,4 +1,4 @@
-package kz.awsstudio.pixai;
+package kz.arianwaitstudio.pixai;
 
 /**
  * Recommended PixAI models, with their {@code modelVersionId} and {@link ModelType}.

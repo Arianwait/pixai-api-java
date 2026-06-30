@@ -1,11 +1,11 @@
-package kz.awsstudio.pixai;
+package kz.arianwaitstudio.pixai;
 
 import java.time.Duration;
 import java.util.Objects;
 
 import org.json.JSONObject;
 
-import kz.awsstudio.pixai.internal.RestClient;
+import kz.arianwaitstudio.pixai.internal.RestClient;
 import okhttp3.OkHttpClient;
 
 /**

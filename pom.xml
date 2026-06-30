@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>kz.awsstudio.pixai</groupId>
+  <groupId>kz.arianwaitstudio.pixai</groupId>
   <artifactId>pixai-api-java</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
@@ -145,7 +145,7 @@
               <filters>
                 <filter>
                   <!-- Drop bundled module descriptors and signatures so the fat jar is a clean
-                       automatic module that exports kz.awsstudio.pixai. -->
+                       automatic module that exports kz.arianwaitstudio.pixai. -->
                   <artifact>*:*</artifact>
                   <excludes>
                     <exclude>module-info.class</exclude>
@@ -160,7 +160,7 @@
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
-                    <Automatic-Module-Name>kz.awsstudio.pixai</Automatic-Module-Name>
+                    <Automatic-Module-Name>kz.arianwaitstudio.pixai</Automatic-Module-Name>
                   </manifestEntries>
                 </transformer>
               </transformers>

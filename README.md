@@ -30,7 +30,7 @@ your local Maven repository, then depend on it:
 
 ```xml
 <dependency>
-  <groupId>kz.awsstudio.pixai</groupId>
+  <groupId>kz.arianwaitstudio.pixai</groupId>
   <artifactId>pixai-api-java</artifactId>
   <version>1.0.0</version>
 </dependency>
@@ -42,7 +42,7 @@ The default model is **Tsubaki.2**, so the only required field is the prompt: cr
 pass your key, set the prompt, run.
 
 ```java
-import kz.awsstudio.pixai.*;
+import kz.arianwaitstudio.pixai.*;
 import java.nio.file.Paths;
 
 PixAIClient client = new PixAIClient(System.getenv("PIXAI_API_KEY")); // 1) client + 2) key

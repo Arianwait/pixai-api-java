@@ -1,4 +1,4 @@
-package kz.awsstudio.pixai;
+package kz.arianwaitstudio.pixai;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
