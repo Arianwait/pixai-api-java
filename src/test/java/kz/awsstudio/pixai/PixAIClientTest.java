@@ -74,7 +74,7 @@ class PixAIClientTest {
         // second request polls the task by id
         RecordedRequest poll = server.takeRequest();
         assertEquals("GET", poll.getMethod());
-        assertEquals("/v2/image/task-1", poll.getPath());
+        assertEquals("/v2/task/task-1", poll.getPath());
     }
 
     @Test

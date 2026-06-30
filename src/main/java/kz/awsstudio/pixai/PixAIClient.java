@@ -37,7 +37,7 @@ public final class PixAIClient {
 
     private static final String DEFAULT_BASE_URL = "https://api.pixai.art";
     private static final String CREATE_PATH = "/v2/image/create";
-    private static final String TASK_PATH_PREFIX = "/v2/image/";
+    private static final String TASK_PATH_PREFIX = "/v2/task/";
 
     private static final Duration DEFAULT_POLL_INTERVAL = Duration.ofSeconds(5);
     private static final Duration DEFAULT_TIMEOUT = Duration.ofMinutes(10);
